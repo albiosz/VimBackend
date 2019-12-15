@@ -8,6 +8,7 @@ Edit::Edit(){
 
 
 char Edit::editMode(){
+    getmaxyx( stdscr, rows, columns ); //Pobieranie wartości okna do zmiennych
     move(rows-1,0);
     clrtoeol();
     printw("-- Edit Mode --");

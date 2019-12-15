@@ -1,18 +1,9 @@
-#include <ncurses.h>
-#include <iostream>
+#pragma once
 #include <string>
-#include <cstring>
-#include "normal.h"
-#include "edit.h"
 
-class VimLike : public Normal, public Edit{
-private:
-	char mode;
-
+class Backend
+{
 public:
-	VimLike();
-	//editMode();
-	//std::string write();
-	char getMode();
-	void setMode(char);
+	virtual void runBackend() = 0;
+	virtual void bind(std::string,void (*func)(void ),std::string) = 0;
 };

@@ -1,25 +1,29 @@
+#pragma once
 #include <ncurses.h>
 #include <iostream>
 #include <string>
 #include <cstring>
 #include <vector>
 
-struct actions{
-	std::string command;
-	std::string description;
+#include "help.h"
+
+struct Command{
+	std::string com;
+	void (*function)(void);
 };
 
-class Normal{
+class Normal : public Help {
 private:
 	int columns,rows; // rozmiary okna
+	std::vector<Command> commands;
 	std::string write();
-	std::vector <actions> instr;
 	void printMode();
 
 public:
 	Normal();
 	char normalMode();
-	void help();
-	void addInstruction(std::string, std::string);
-
+	void addCommand(std::string, void (*func)(void));
+	void addCommandClass(std::string com, void (Normal::*func)(void));
+	void chooseFuction(std::string com);
+	int quit();
 };

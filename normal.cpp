@@ -2,13 +2,28 @@
 
 Normal::Normal(){
     getmaxyx( stdscr, rows, columns ); //Pobieranie wartości okna do zmiennych
-    addInstruction(":q or :quit", "exit from application\n");
-    addInstruction(":h or :help", "get help about commands\n");
+    // addCommandClass(":h", &this->printHelp);
+    // addCommandClass(":help", &this->printHelp);
+}
+
+void Normal::addCommand(std::string com, void (*func)(void)){
+    commands.push_back(Command{com, func});
+}
+
+void Normal::chooseFuction(std::string com){
+    for (Command comm : commands){
+        if (comm.com == com){
+            comm.function();
+            break;
+        }
+    }
 }
 
 char Normal::normalMode(){
-	
+
+	getmaxyx( stdscr, rows, columns ); //Pobieranie wartości okna do zmiennych
 	do{
+
         printMode();
         move(0,0);
 
@@ -20,6 +35,9 @@ char Normal::normalMode(){
     		case 'i':
     			return 1;
     			break;
+            case 'Z': // press double 'Z' to exit
+                if (getch() == 'Z') return quit();
+                break;
     		case ':':
     			command = write();
     			break;
@@ -28,14 +46,20 @@ char Normal::normalMode(){
     	}
 
     	if (command != ""){
-    		if (command == ":q" || command == ":quit") return -1;
-            else if (command ==":h" || command == ":help") help();
+    		if (command == ":q" || command == ":quit") return quit();
+            else if (command ==":h" || command == ":help") printHelp();
+            else chooseFuction(command);
+            
     	}
     	else{
     		move(0,0);
     	}
 
     } while(true);
+}
+
+int Normal::quit(){
+    return -1;
 }
 
 std::string Normal::write(){
@@ -64,32 +88,11 @@ std::string Normal::write(){
                 text += c;
                 // char cstr[text.size()+1];
                 // strcpy(cstr, text.c_str());
-                // printw("%s",cstr);
                 break;
 		}
 	}
 }
 
-void Normal::help(){
-    clear();
-    move(0,0);
-    printw("Help section. Commands with description:\n");
-    for (unsigned int i = 0; i < instr.size(); i++){
-        char com[instr[i].command.size()+1];
-        char des[instr[i].description.size()+1];
-        strcpy(com, instr[i].command.c_str());
-        strcpy(des, instr[i].description.c_str());
-        printw("%s - %s",com,des);
-    }
-    printw("\n\nPress a KEY to exit help section!");
-    getch();
-    clear();
-}
-
-void Normal::addInstruction(std::string com, std::string des){
-    actions temp {com,des};
-    instr.push_back(temp);
-}
 
 void Normal::printMode(){
     move(rows-1,0);
