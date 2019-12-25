@@ -22,9 +22,9 @@ void testFunc1(){
 int main(){
     VimLike vim;
     Backend* back = &vim;
-    back -> bind("#vim#:a",testFunc,"This is sample instruction which prints 'testFunc'");
-    back -> bind("#vim#:b",testFunc1,"This is sample instruction which prints 'testFunc1'");
-    back -> bind("#vim#:c",testFunc,"This is sample instruction which prints 'testFunc'");
+    back -> bind("#vim#:a<ENTER>%somecomment",testFunc,"This is sample instruction which prints 'testFunc'");
+    back -> bind("#vim#:b<ENTER>",testFunc1,"This is sample instruction which prints 'testFunc1'");
+    back -> bind(":c<ENTER>.somecomment",testFunc,"This is sample instruction which prints 'testFunc'");
     back -> bind("#nano#:ab",testFunc1,"This is sample instruction which prints 'testFunc'");
     back -> bind("#nano#:ab",testFunc,"This is sample instruction which prints 'testFunc'");
     back -> runBackend();

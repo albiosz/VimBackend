@@ -39,6 +39,8 @@ char Normal::normalMode(){
             case 'Z': // press double 'Z' to exit
                 if (getch() == 'Z') return quit();
                 break;
+            case 10:
+                
     		case ':':
     			command = write();
     			break;

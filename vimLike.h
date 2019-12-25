@@ -20,6 +20,7 @@ public:
 	char getMode();
 	void setMode(char);
 	void bind(std::string,void (*func)(void ),std::string);
+	int findComment(std::string);
 	// void bind(std::string,void (FrontEnd::*func)(void ),std::string);
 	// void bind(std::string,std::string);
 };
