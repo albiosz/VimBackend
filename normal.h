@@ -12,6 +12,14 @@ struct Command{
 	void (*function)(void);
 };
 
+struct Key
+{
+    std::string text;
+    int num;
+};
+
+const Key keys[] {Key{"<ENTER>", 10}, Key{"<ESC>", 27}};
+
 class Normal : public Help {
 private:
 	int columns,rows; // rozmiary okna
@@ -25,5 +33,6 @@ public:
 	void addCommand(std::string, void (*func)(void));
 	void addCommandClass(std::string com, void (Normal::*func)(void));
 	void chooseFuction(std::string com);
+	int changeTextToInt(std::string text);
 	int quit();
 };

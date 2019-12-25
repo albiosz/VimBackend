@@ -1,5 +1,6 @@
 #include "normal.h"
 
+
 Normal::Normal(){
     getmaxyx( stdscr, rows, columns ); //Pobieranie wartości okna do zmiennych
     // addCommandClass(":h", &this->printHelp);
@@ -100,3 +101,4 @@ void Normal::printMode(){
     printw("-- Normal Mode --");
     move(0,0);
 }
+
