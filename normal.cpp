@@ -1,20 +1,50 @@
 #include "normal.h"
 
 
-Normal::Normal(){
+
+Normal::Normal(Frontend* front){
     getmaxyx( stdscr, rows, columns ); //Pobieranie wartości okna do zmiennych
+    frontend = front;
     // addCommandClass(":h", &this->printHelp);
     // addCommandClass(":help", &this->printHelp);
 }
 
-void Normal::addCommand(std::string com, void (*func)(void)){
-    commands.push_back(Command{com, func});
+void Normal::addCommand(std::string com, std::string entry, bool edit_mode, void (*func)(void)){
+    commands.push_back(Command{com, entry, edit_mode, func});
 }
 
-void Normal::chooseFuction(std::string com){
+// void Normal::addCommandClass(std::string com, std::string entry, void (Frontend::*func)(void)){
+//     commands.push_back(Command{com, entry, func});
+// }
+
+bool Normal::chooseFunction(std::string com){
+
+    std::string comI = com.substr(0,com.find(' '));
+    
     for (Command comm : commands){
-        if (comm.com == com){
+        if (comm.com == comI){
+            printw("inside\n");
+            if (comm.entry.length() > 0){
+
+                int pos = com.find(' ');
+                if (pos != std::string::npos){
+
+                    std::string entry_value = com.substr(com.find(' ') + 1);
+                    frontend -> setEntry(comm.entry, entry_value);
+                }
+            }
+
             comm.function();
+
+            if (comm.edit_mode){
+                edition();
+
+                char c;
+                do{
+                    c = getch();
+                    frontend -> setEntry("KEY", std::string(1,c));
+                } while(c != 27);
+            }
             break;
         }
     }
@@ -23,15 +53,14 @@ void Normal::chooseFuction(std::string com){
 char Normal::normalMode(){
 
 	getmaxyx( stdscr, rows, columns ); //Pobieranie wartości okna do zmiennych
+    std::string command="";
 	do{
-
         printMode();
         move(0,0);
 
-        std::string command="";
-        int c;
+        char c;
     	c = getch();
-
+        // printw("%d",c);
     	switch (c){
     		case 'i':
     			return 1;
@@ -39,29 +68,34 @@ char Normal::normalMode(){
             case 'Z': // press double 'Z' to exit
                 if (getch() == 'Z') return quit();
                 break;
-            case 10:
-                
     		case ':':
-    			command = write();
+    			command = write(); // command which starting with : and confirmed by enter
     			break;
     		default:
+                command = std::string(1,c); // one character command
     		break;
     	}
-
+        move(0,0);
     	if (command != ""){
     		if (command == ":q" || command == ":quit") return quit();
             else if (command ==":h" || command == ":help") printHelp();
-            else chooseFuction(command);
-            
+            else chooseFunction(command);
+
     	}
-    	else{
-    		move(0,0);
-    	}
+        
+        command = "";
 
     } while(true);
 }
 
 int Normal::quit(){
+    if (frontend -> getEntry("IS_SAVED") == "NO"){
+        move(rows-1,0);
+        clrtoeol();
+        printw("Unsaved files! If you want to exit press 'y': ");
+        char c = getch();
+        if (c != 'y') return 0;
+    }
     return -1;
 }
 
@@ -77,10 +111,7 @@ std::string Normal::write(){
 				return "";
 				break;
 			case 127:
-                int x,y;
-				getyx(curscr,y,x);
-    			move(y,--x);
-    			delch();
+                eraseChar();
                 text = text.substr(0,text.size()-1);
                 break;
     		case 10:
@@ -104,3 +135,9 @@ void Normal::printMode(){
     move(0,0);
 }
 
+void Normal::eraseChar(){
+    int x,y;
+    getyx(curscr,y,x);
+    move(y,--x);
+    delch();
+}

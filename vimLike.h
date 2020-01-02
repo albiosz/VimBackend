@@ -3,6 +3,7 @@
 #include "normal.h"
 #include "edit.h"
 #include "backend.h"
+#include "frontend.h"
 
 #include <ncurses.h>
 #include <iostream>
@@ -15,6 +16,7 @@ private:
 	char mode;
 
 public:
+	VimLike(Frontend*);
 	VimLike();
 	void runBackend();
 	char getMode();
