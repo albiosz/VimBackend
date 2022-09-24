@@ -4,35 +4,41 @@
 #include <string>
 #include <cstring>
 #include <vector>
+#include <functional>
+#include <map>
 
 #include "help.h"
+#include "frontend.h"
+
+#define ENTER 10
+#define ESC 27
 
 struct Command{
-	std::string com;
-	void (*function)(void);
+	std::string entry;
+	bool edit_mode;
+	std::function<void()> function;
 };
 
-struct Key
-{
-    std::string text;
-    int num;
-};
-
-const Key keys[] {Key{"<ENTER>", 10}, Key{"<ESC>", 27}};
+//adsfasdf
 
 class Normal : public Help {
 private:
 	int columns,rows; // rozmiary okna
-	std::vector<Command> commands;
 	std::string write();
-	void printMode();
+	void printMode(std::string);
+
+protected:
+	std::function<void()> edition;
+	std::function<void()> refreshRoutine;
+    std::map<std::string, Command> commands;
+    Frontend *frontend;
 
 public:
-	Normal();
+	Normal(Frontend* front);
 	char normalMode();
-	void addCommand(std::string, void (*func)(void));
-	void addCommandClass(std::string com, void (Normal::*func)(void));
-	void chooseFuction(std::string com);
-	int changeTextToInt(std::string text);
-	int quit();
+	void editMode();
+	bool chooseFunction(std::string com);
+	void eraseChar();
+	char quit();
+    std::string oneCharHandling(int c);
 };
